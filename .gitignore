@@ -1,0 +1,11 @@
+*.zip
+*.csv
+*.txt
+*store
+*.ipynb
+*.json
+*.h5
+move_images.py
+*project1/
+training_data/
+validation_data/
