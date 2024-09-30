@@ -21,9 +21,9 @@ def create_model(captcha_length, captcha_num_symbols, input_shape, model_depth=5
   for i, module_length in enumerate([module_size] * model_depth):
       for j in range(module_length):
           x = tf.keras.layers.Conv2D(32*2**min(i, 3), kernel_size=3, padding='same', kernel_initializer='he_uniform')(x)
-          x = tf.keras.layers.BatchNormalization()(x)
           x = tf.keras.layers.Activation('relu')(x)
       x = tf.keras.layers.MaxPooling2D(2)(x)
+      x = tf.keras.layers.BatchNormalization()(x)
 
   x = tf.keras.layers.Flatten()(x)
   x = [tf.keras.layers.Dense(captcha_num_symbols, activation='softmax', name='char_%d'%(i+1))(x) for i in range(captcha_length)]
