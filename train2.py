@@ -23,7 +23,7 @@ def create_model(captcha_length, captcha_num_symbols, input_shape, model_depth=5
           x = tf.keras.layers.Conv2D(32*2**min(i, 3), kernel_size=3, padding='same', kernel_initializer='he_uniform')(x)
           x = tf.keras.layers.Activation('relu')(x)
       x = tf.keras.layers.MaxPooling2D(2)(x)
-      x = tf.keras.layers.BatchNormalization()(x)
+      x = tf.keras.layers.BatchNormalization()(x)   
 
   x = tf.keras.layers.Flatten()(x)
   x = [tf.keras.layers.Dense(captcha_num_symbols, activation='softmax', name='char_%d'%(i+1))(x) for i in range(captcha_length)]
@@ -160,8 +160,14 @@ def main():
         if args.input_model is not None:
             model.load_weights(args.input_model)
 
+        lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+            initial_learning_rate=1e-3,
+            decay_steps=1000,
+            decay_rate=0.96,
+            staircase=True)
+
         model.compile(loss='categorical_crossentropy',
-                      optimizer=tf.keras.optimizers.Adam(1e-3, amsgrad=False),
+                      optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule, amsgrad=False),
                       metrics=['accuracy'])
 
         model.summary()
