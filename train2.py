@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Command:
-# python3 train2.py --width 128 --height 64 --length 5 --symbols symbols.txt --batch-size 32 --epochs 5 --output-model test --train-dataset training_data --validate-dataset validation_data
+# python3 train2.py --width 128 --height 64 --length 5 --symbols symbols.txt --batch-size 32 --epochs 20 --output-model test --train-dataset training_data --validate-dataset validation_data
 
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -175,9 +175,9 @@ def main():
         training_data = ImageSequence(args.train_dataset, args.batch_size, args.length, captcha_symbols, args.width, args.height)
         validation_data = ImageSequence(args.validate_dataset, args.batch_size, args.length, captcha_symbols, args.width, args.height)
 
-        callbacks = [tf.keras.callbacks.EarlyStopping(patience=3),
-                     # keras.callbacks.CSVLogger('log.csv'),
-                     tf.keras.callbacks.ModelCheckpoint(args.output_model_name+'.keras', save_best_only=False)]
+        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
+                     # tf.keras.callbacks.CSVLogger('log.csv'),
+                     tf.keras.callbacks.ModelCheckpoint(args.output_model_name + '.h5', save_best_only=True, monitor='val_loss', mode='min'),]
 
         # Save the model architecture to JSON
         with open(args.output_model_name+".json", "w") as json_file:
